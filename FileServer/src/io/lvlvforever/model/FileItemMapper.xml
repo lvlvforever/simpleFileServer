@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.lvlvforever.model.FileItemMapper">
+  <insert id="addFileItem" >
+    insert into FILE_ITEM (UPLOADTIME,FILENAME,FILESIZE,MD5,IP,ABBR) VALUES (#{uploadTime},#{fileName},#{fileSize},#{md5},#{ip},#{abbr})
+  </insert>
+  <select id="queryFileItem" resultType="io.lvlvforever.model.FileItem">
+  	select * from FILE_ITEM where ID = #{id}
+  </select>
+   <select id="searchFileItem" resultType="io.lvlvforever.model.FileItem" parameterType="string">
+  	select * from FILE_ITEM 
+  	<choose>
+  	<when test="name != null and abbr != null">
+  	where  FILENAME like '%${name}%'  or ABBR like '%${abbr}%'
+  	</when>
+  	<when test="abbr != null and name == null">
+  		where ABBR like '%${abbr}%'
+  	</when>
+  	<when test="abbr == null and name != null">
+  		where  FILENAME like '%${name}%'
+  	</when>
+  	<otherwise>
+  	</otherwise>
+  	</choose>  	
+  </select>
+  <delete id="deleteFileItem" >
+  	delete from FILE_ITEM where ID = #{id}
+  </delete>
+</mapper>

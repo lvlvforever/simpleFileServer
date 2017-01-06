@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>测试文件传输</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script src="js/jquery-1.11.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<style>
+.container {
+	width: 1200px !important;
+	margin-top: 0.5%;
+}
+
+.container .row:nth-child(1) div {
+	background-color: #ececec;
+	height: 4em;
+	line-height: 4em;
+}
+
+.container .row:nth-child(1) span {
+	font-size: 1.5em;
+}
+
+.container>.row:nth-child(1) button {
+	float: right;
+	margin-top: 1em;
+}
+.container>.row:nth-child(1) input {
+	float: right;
+	height:30px;
+	margin-top: .9em;
+    margin-left: 1em;
+}
+.container>.row:nth-child(2) div:nth-child(1) {
+	padding-left:0;
+	padding-right:0;
+}
+.container .row:nth-child(2) table td {
+	vertical-align: middle;
+}
+
+.container .row:nth-child(2) table tr:hover {
+	background-color: #8e98f7;
+}
+.container .row:nth-child(2) table tr td:last-child{
+	min-width:180px;
+}
+.container .row:nth-child(2) table tr td:last-child button:last-child{
+	margin-left:5px;
+}
+.container .row:nth-child(2) table tr td:last-child button:nth-child(2){
+	margin-left:5px;
+}
+.container .row:nth-child(2) table tr td:nth-child(2){
+	min-width:500px;
+}
+.container .row:nth-child(2) table tr td:nth-child(4){
+	min-width:120px;
+}
+
+
+#uploadModal input:nth-child(1) {
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+.modal-body .progress {
+	margin-top: 2%;
+}
+
+</style>
+</head>
+<body>
+	<div class="container">
+
+
+		<div class="row">
+			<div class="col-md-12">
+				<span>文件存储路径:</span> 
+				<span></span>
+				<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件最多保存20天</span>
+				<button class="btn btn-primary btn-sm" id="search">搜索</button>
+				<input type="text" id="query">
+				
+				<button class="btn btn-primary btn-sm" data-toggle="modal"
+					data-target="#uploadModal">上传文件</button>
+				
+			</div>
+		</div>
+
+
+
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-bordered table-hover table-striped">
+					<tr>
+					    <th>文件ID</th>
+						<th>文件名称</th>
+						<th>上传时间</th>
+						<th>文件大小</th>
+						<th>上传者</th>
+						<th>操作</th>
+					</tr>
+					<!--  
+					<tr>
+						<td>深色的海面布满白色的月光</td>
+						<td>2016-10-10 10:10:10</td>
+						<td>633,343,434 KB</td>
+						<td>
+							<button class="btn btn-success btn-sm">下载</button>
+							<button class="btn btn-success btn-sm">删除</button>
+						</td>
+					</tr>
+					-->
+					
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="uploadModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">文件上传</h4>
+				</div>
+				<div class="modal-body">
+					<form action="UploadFileServlet" method="POST" target="uploadFrame"
+						enctype="multipart/form-data">
+						<input type="file" name="uploadFile" id="uploadFile">
+						上传者: <input type="text" name="abbr">
+					</form>
+
+					<div class="progress">
+						<div class="progress-bar progress-bar-success" style="width: 0">
+
+						</div>
+					</div>
+					<div id="process-status">
+						<span>传输速度:</span>
+						<span></span>
+						<span>&nbsp;&nbsp;</span>
+						<span>当前用时:</span>
+						<span></span>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary">上传</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<span style="float: left;" id="message"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<iframe width=0 height=0 name="uploadFrame"></iframe>
+
+<!-- Modal -->
+<div class="modal fade bs-example-modal-sm" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">删除文件对话框</h4>
+      </div>
+      <div class="modal-body">
+        确定删除此文件么？
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger">确定</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="checkMD5Modal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">核验MD5</h4>
+				</div>
+				<div class="modal-body">
+					
+					<div >
+						源文件MD5值 <span id="srcMD5"></span>
+					</div>
+					<div>
+						现文件MD5值 <span id="dstMD5"></span>
+					</div>
+
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var finished;
+		$('#uploadModal .modal-footer button:nth-child(1)').on('click', function() {
+			var file = $('#uploadFile').val();
+			if(file === ''){
+				$('#message').text("请选择需要上传的文件");
+				return;
+			}
+			getStatus();
+		});
+		$('#search').on('click',function(){
+			var q = $('#query').val();
+			query(q);
+		});
+		$('#checkMD5Modal').on('hidden.bs.modal',function(){
+			$('#srcMD5').text("");
+			$('#dstMD5').text("");
+
+		});
+
+		$('#uploadModal').on('hidden.bs.modal',close);
+		function getStatus() {
+			finished = false;
+			document.forms[0].submit();
+			console.log("finished = " + finished);
+			setTimeout(showStatus,1000);
+			
+		}
+
+		function showStatus() {
+
+			if (finished === true)
+				return;
+			$.ajax({
+				url : 'UploadFileServlet',
+				type : 'GET',
+				dataType:'json',
+				success : function(data) {
+					if(data.result === 'success'){
+					$('#process-status span:nth-child(2)').text(data.object.velocity + " KB/s");
+					$('#process-status span:nth-child(5)').text(data.object.duration + " s");
+
+					var tmpPercent = data.object.percent;
+					var percent =  Math.round(tmpPercent * 100) + '%';
+					console.log('percent = ' + percent);
+					$('.progress-bar').text(percent);
+					
+					$('.progress-bar').css({
+						width : percent
+					});
+					if (data.object.finished === true) {
+						finished = true;
+						setTimeout(function(){$('#uploadModal').modal('hide');}, 2000);
+						}
+					}
+				},
+				error : function(data) {
+					console.log(JSON.stringify(data));
+				}
+
+			});
+			setTimeout(showStatus, 50);
+		}
+		function close() {
+			$('#uploadFile').val('');
+			$('.progress-bar').text('0%');
+			
+			$('.progress-bar').css({
+				width : 0
+			});
+			$('#process-status span:nth-child(2)').text("");
+			$('#process-status span:nth-child(5)').text("");
+
+			setTimeout(refresh,10);
+			}
+		function refresh(){
+			window.location.replace(location.href);
+		}
+		$(function(){
+			$.get('QueryStorageServlet',function(data,textStatus){
+				$('.container .row:nth-child(1) div:nth-child(1) span:nth-child(2)').text(data);
+			});
+			 query();
+			
+			
+			
+			$(".container .row:nth-child(2) table").on('click','tr:gt(0) td:last-child button:first-child',function(){
+            		var id = $(this).parent().data("id");
+            		downloadFile(id);
+			});
+			$(".container .row:nth-child(2) table").on('click','tr:gt(0) td:last-child button:nth-child(2)',function(){
+        		var id = $(this).parent().data("id");
+        		checkMD5(id);
+			});
+            $(".container .row:nth-child(2) table").on('click','tr:gt(0) td:last-child button:last-child',function(){
+            	var id = $(this).parent().data("id");
+            	$('#deleteModal button:first-child').on('click',function(){
+            		deleteFile(id);
+            		window.location.replace(location.href);
+            	});
+            });
+           
+		});
+		function downloadFile(id){
+			
+			window.location.href='DownloadFileServlet?id='+id;
+
+		}
+		function deleteFile(id){
+			$.get('DeleteFileServlet?id='+id);
+			
+			//window.location.href='DeleteFileServlet?id='+id;
+		}
+		function checkMD5(id){
+			
+			$.getJSON("CheckMD5?id="+id,function(data,textStatus){
+				if(data.success === 'true'){
+					$('#srcMD5').text(data.MD5);
+				}
+			});
+			$('#dstMD5').text("正在计算...");
+
+			$.getJSON("CheckNewMD5?id="+id,function(data,textStatus){
+				
+				if(data.success === 'true'){
+					$('#dstMD5').text(data.MD5);
+				}
+			});
+		}
+		function query(q){
+			var serviceUrl="QueryFileList";
+			if(q !== undefined){
+				serviceUrl += '?name='+q+'&abbr='+q;
+			}
+			$.ajax({
+				url : serviceUrl,
+				type : 'GET',
+				dataType:'json',
+				success : function(data) {
+					$('table tr:gt(0)').remove();
+					if(data === undefined){
+						return;
+					}
+					data.sort(function(a,b){
+						return b.id - a.id;
+					});
+					$(data).each(function(i,x){
+						var date = new Date(x.uploadTime * 1000);
+						var time = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+(date.getDate()+1)+' '+date.getHours()+':'+date.getMinutes()+':' + date.getSeconds();
+						
+						var size = x.fileSize.split('').reverse().join('').replace(/(\d{3})/g,'$1,').replace(/\,$/,'').split('').reverse().join('');
+						$('table').append('<tr><td>'+x.uploadTime+'</td><td>'+x.fileName+'</td><td>'+time+'</td><td>'+size+' B</td><td>'+x.abbr+'</td><td data-id='+x.id+' data-md5='+x.md5+'><button class="btn btn-success btn-sm">下载</button><button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#checkMD5Modal">核验</button><button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal">删除</button></td></tr>');
+					});
+				},
+				error : function(data) {
+					console.log(JSON.stringify(data));
+				}
+
+			});
+		}
+	</script>
+
+</body>
+</html>

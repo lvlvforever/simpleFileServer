@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.lvlvforever.model.ConfigMapper">
+  <select id="queryKey" resultType="io.lvlvforever.model.Config">
+    select * from CONFIG where key = #{key}
+  </select>
+  <insert id="addKey" flushCache="true">
+  	insert into CONFIG (KEY,VALUE) values (#{key},#{value})
+  </insert>
+   <update id="updateKey" flushCache="true">
+  	update  CONFIG set VALUE=#{value} where KEY=#{key}
+  </update>
+</mapper>

@@ -1,0 +1,5 @@
+/database.db
+/io/
+/jdbc.properties
+/log4j.properties
+/mybatis-config.xml
